@@ -1,4 +1,6 @@
+import os
 from logging.config import fileConfig
+from pprint import pprint
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
@@ -6,7 +8,8 @@ from sqlalchemy import pool
 from alembic import context
 
 from app import settings
-from app.database import load_models, metadata
+from app.database import load_models
+from app.models.base import metadata
 
 
 # this is the Alembic Config object, which provides
@@ -18,8 +21,9 @@ config = context.config
 config.set_main_option("sqlalchemy.url", str(settings.DATABASE_URL))
 
 load_models()
+load_config = config.attributes.get("configure_logger", True)
 
-if config.config_file_name is not None:
+if load_config and config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # add your model's MetaData object here

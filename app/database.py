@@ -1,8 +1,11 @@
-from sqlalchemy import MetaData
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from typing import AsyncGenerator, Annotated
 
-import settings
+from fastapi import Depends
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 
+from . import settings
+
+__all__ = ["AsyncDBSession", "load_models"]
 
 async_engine = create_async_engine(
     settings.DATABASE_URL.replace("postgresql:", "postgresql+asyncpg:"),
@@ -10,22 +13,20 @@ async_engine = create_async_engine(
     echo=settings.DEBUG and False,
 )
 
-AsyncSessionLocal = async_sessionmaker(
+async_session_maker = async_sessionmaker(
     bind=async_engine,
     autoflush=False,
     future=True,
     expire_on_commit=False,
 )
 
-metadata = MetaData(
-    naming_convention={
-        "ix": "ix_%(column_0_label)s",
-        "uq": "uq_%(table_name)s_%(column_0_name)s",
-        "ck": "ck_%(table_name)s_%(constraint_name)s",
-        "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
-        "pk": "pk_%(table_name)s",
-    }
-)
+
+async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
+    async with async_session_maker() as session:
+        yield session
+
+
+AsyncDBSession = Annotated[AsyncSession, Depends(get_async_session)]
 
 
 def load_models():

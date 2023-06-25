@@ -9,7 +9,7 @@ readme = "README.md"
 python = "^3.10"
 fastapi = {version= "=0.100.0b1", allow-prereleases= true}
 uvicorn = {extras = ["standard"], version = "^0.22.0"}
-types-redis = "^4.5.3"
+types-redis = "^4.6"
 rich = "^13.3"
 asyncpg = "^0.27.0"
 sqlalchemy = "^2.0.9"
@@ -17,6 +17,10 @@ orjson = "^3.8.8"
 pydantic =  {version= ">=2.0a1", allow-prereleases= true}
 redis = {version= "^4.6.0", extras = ["hiredis"]}
 alembic = "^1.11.1"
+greenlet = "^2.0.2"
+psycopg2-binary = "^2.9.6"
+jinja2 = "^3.1.2"
+loguru = "^0.7.0"
 
 [build-system]
 requires = ["poetry-core"]

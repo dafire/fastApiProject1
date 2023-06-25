@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="{{ request.url_for("static", path="main.js?somerandomcode") }}" data-turbo-track="reload"
+            defer></script>
+    {# TODO: include some static random code #}
+    <title>Bootstrap w/ Webpack</title>
+</head>
+<body data-controller="page">
+<div class="container py-4 px-3 mx-auto">
+    <h1>Hello, Bootstrap and Webpack!</h1>
+
+    <button class="btn btn-secondary" data-action="page#toast">Toast</button>
+
+    <turbo-frame id="button">
+        <a href="{{ request.url_for("web_hello", name="Peter") }}" data-turbo-action="advance" class="btn btn-primary">Primary
+            button</a>
+    </turbo-frame>
+
+    <turbo-frame id="test">
+        <a href="{{ request.url_for("web_hello", name="Peter") }}" class="btn btn-primary">Primary button</a>
+    </turbo-frame>
+
+    <h4>Page {{ page }}</h4>
+
+    <div>
+        <a href="{{ request.url_for("web_page", page="1") }}" class="btn btn-primary">1</a>
+        <a href="{{ request.url_for("web_page", page="2") }}" class="btn btn-primary">2</a>
+        <a href="{{ request.url_for("web_page", page="3") }}" class="btn btn-primary">3</a>
+    </div>
+
+
+</div>
+<div data-page-target='toastArea' id='toastArea' class='position-absolute m-3 top-0 end-0' data-turbo-permanent></div>
+</body>
+</html>
