@@ -3,29 +3,29 @@
 const path = require('path');
 const isProduction = process.env.NODE_ENV === 'production';
 const autoprefixer = require('autoprefixer')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const WebpackAssetsManifest = require('webpack-assets-manifest');
 
 const config = {
     entry: './src/index.js',
     output: {
         path: path.resolve(__dirname, '../static'),
+        filename: '[name]-[hash].js',
     },
     plugins: [
-        // Add your plugins here
-        // Learn more about plugins from https://webpack.js.org/configuration/plugins/
+        new WebpackAssetsManifest({
+            // Options go here
+        }),
+        new MiniCssExtractPlugin({
+            filename: '[name]-[hash].css',
+        }),
     ],
     module: {
         rules: [
             {
                 test: /\.(scss)$/,
-                use: [
-                    {
-                        // Adds CSS to the DOM by injecting a `<style>` tag
-                        loader: 'style-loader'
-                    },
-                    {
-                        // Interprets `@import` and `url()` like `import/require()` and will resolve them
-                        loader: 'css-loader'
-                    },
+                use: [MiniCssExtractPlugin.loader,
+                    'css-loader',
                     {
                         // Loader for webpack to process CSS with PostCSS
                         loader: 'postcss-loader',

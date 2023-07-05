@@ -3,9 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="{{ request.url_for("static", path="main.js?somerandomcode") }}" data-turbo-track="reload"
-            defer></script>
-    {# TODO: include some static random code #}
+    <script src="{{ request.url_for("static", path="main.js"|asset) }}" data-turbo-track="reload" defer></script>
+    <link rel="stylesheet" href="{{ request.url_for("static", path="main.css"|asset) }}" data-turbo-track="reload">
     <title>Bootstrap w/ Webpack</title>
 </head>
 <body data-controller="page">
