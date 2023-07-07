@@ -20,7 +20,8 @@ replace_log_handlers()
 
 app.include_router(web_router)
 app.include_router(router, prefix="/alembic")
-app.mount("/static", StaticFiles(directory="static"), name="static")
+static_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'static'))
+app.mount("/static", StaticFiles(directory=static_folder), name="static")
 
 template_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'templates'))
 jinja2env = JinjaTemplates.initialize(template_folder, auto_reload=settings.DEBUG)
@@ -29,7 +30,7 @@ jinja2env = JinjaTemplates.initialize(template_folder, auto_reload=settings.DEBU
 ##
 @pass_context  # context is required otherwise jinja2 caches the result in bytecode for constants
 def debug_asset_filter(_, path):
-    txt = Path(os.path.join("static", "assets-manifest.json")).read_text()
+    txt = Path(os.path.join(static_folder, "assets-manifest.json")).read_text()
     return orjson.loads(txt).get(path)
 
 
