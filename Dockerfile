@@ -3,9 +3,9 @@ FROM node:18 as frontend
 WORKDIR /usr/src/app
 
 COPY frontend ./
-RUN npm install
-RUN npm run build:prod
 
+RUN npm install; \
+    npm run build:prod
 
 # set base image (host OS)
 FROM python:3.11-bookworm

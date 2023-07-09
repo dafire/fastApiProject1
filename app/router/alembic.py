@@ -29,11 +29,11 @@ def history():
         data["upgrade_possible"] = False
         data["current"] = False
         data["downgrade_possible"] = False
-        if "(current)" in data["tags"]:
+        if "(current)" in tags:
             data["current"] = True
         elif upgrade_possible:
             data["upgrade_possible"] = True
-            if "(head)" in data["tags"]:
+            if "(head)" in tags:
                 data["deletion_possible"] = True
         else:
             data["downgrade_possible"] = True
