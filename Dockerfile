@@ -31,7 +31,7 @@ WORKDIR /var/www
 COPY poetry.lock pyproject.toml /var/www/
 
 # install dependencies
-RUN poetry install --no-dev --no-interaction
+RUN poetry install --only main --no-interaction
 
 # get current git version from github action
 ARG GIT_VERSION=develop
@@ -39,6 +39,7 @@ ENV GIT_VERSION=${GIT_VERSION}
 
 # copy the content of the local src directory to the working directory
 COPY --chown=www-data app/ /var/www/app
+COPY --chown=www-data templates/ /var/www/templates
 
 COPY --from=frontend /usr/src/static ./static
 
