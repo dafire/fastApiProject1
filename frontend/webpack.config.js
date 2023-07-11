@@ -5,6 +5,8 @@ const isProduction = process.env.NODE_ENV === 'production';
 const autoprefixer = require('autoprefixer')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const WebpackAssetsManifest = require('webpack-assets-manifest');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+
 
 const config = {
     entry: './src/index.js',
@@ -13,6 +15,7 @@ const config = {
         filename: '[name]-[hash].js',
     },
     plugins: [
+        new CleanWebpackPlugin(),
         new WebpackAssetsManifest({
             // Options go here
         }),

@@ -9,7 +9,7 @@ from rich.pretty import pprint
 from starlette.staticfiles import StaticFiles
 
 import settings
-from utils.jinja2_templates import JinjaTemplates
+from utils.jinja2_templates import JinjaTemplates, Template
 from router.web import web_router
 from router.alembic import router
 from utils.loguru_logger import replace_log_handlers
