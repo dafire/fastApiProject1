@@ -1,3 +1,5 @@
+import os
+
 from starlette.config import Config
 from starlette.datastructures import Secret
 
@@ -13,3 +15,7 @@ DATABASE_URL = config(
     "DATABASE_URL",
     default=f"postgresql://postgres:{DATABASE_PASSWORD}@localhost:5434/postgres",
 )
+
+STATIC_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "static"))
+
+TEMPLATE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "templates"))

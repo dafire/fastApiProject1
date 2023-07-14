@@ -3,7 +3,7 @@ import logging
 import sys
 from pprint import pformat
 
-# if you dont like imports of private modules
+# if you don't like imports of private modules
 # you can move it to typing.py module
 from loguru import logger
 from loguru._defaults import LOGURU_FORMAT
@@ -11,7 +11,7 @@ from loguru._defaults import LOGURU_FORMAT
 
 class InterceptHandler(logging.Handler):
     """
-    Default handler from examples in loguru documentaion.
+    Default handler from examples in loguru documentation.
     See https://loguru.readthedocs.io/en/stable/overview.html#entirely-compatible-with-standard-logging
     """
 
@@ -23,7 +23,7 @@ class InterceptHandler(logging.Handler):
             level = record.levelno
 
         # Find caller from where originated the logged message
-        frame, depth = logging.currentframe(), 2
+        frame, depth = sys._getframe(6), 6
         while frame.f_code.co_filename == logging.__file__:
             frame = frame.f_back
             depth += 1
@@ -90,4 +90,4 @@ def replace_log_handlers():
     logging.getLogger("uvicorn.access").handlers = [intercept_handler]
     # set logs output, level and format
 
-    logger.configure(handlers=[{"sink": sys.stdout, "level": logging.DEBUG, "format": format_record}])
+    # logger.configure(handlers=[{"sink": sys.stdout, "level": logging.DEBUG, "format": format_record}])

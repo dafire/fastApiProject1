@@ -14,7 +14,7 @@ rich = "^13.3"
 asyncpg = "^0.28.0"
 sqlalchemy = "^2.0.9"
 orjson = "^3.8.8"
-pydantic =  {version= "^2.0", allow-prereleases= false}
+pydantic =  {version= "^2.0.3", allow-prereleases= false}
 redis = {version= "^4.6.0", extras = ["hiredis"]}
 alembic = "^1.11.1"
 greenlet = "^2.0.2"
@@ -23,8 +23,13 @@ jinja2 = "^3.1.2"
 loguru = "^0.7.0"
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.3.0"
+black = {extras = ["d"], version = "^23.7.0"}
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.black]
+line-length = 140
+target-version = ['py311']
