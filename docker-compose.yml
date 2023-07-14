@@ -2,8 +2,8 @@ version: '3.3'
 services:
   redis:
     image: redis/redis-stack-server:latest
-    ports:
-      - "6379:6379"
+    #ports:
+    #  - "6379:6379"
     #  - "8001:8001"
   db:
     image: postgres:15.1-alpine
@@ -12,7 +12,7 @@ services:
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-}
       POSTGRES_INITDB_ARGS: "--auth-local=md5"
     ports:
-      - "5432:5432"
+      - "5434:5432"
     volumes:
       - "pgdata:/var/lib/postgresql/data"
 

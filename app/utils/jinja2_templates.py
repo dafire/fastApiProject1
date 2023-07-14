@@ -1,13 +1,32 @@
 import os
+from functools import cache
+from pathlib import Path
 from typing import Annotated
 
 import jinja2
+import orjson
 from fastapi import Depends
 from starlette.requests import Request
 from starlette.responses import HTMLResponse
-from starlette.templating import Jinja2Templates
+from starlette.templating import Jinja2Templates, pass_context
 
 __all__ = ["JinjaTemplates", "Template"]
+
+import settings
+
+static_folder = "static"
+
+
+##
+@pass_context  # context is required otherwise jinja2 caches the result in bytecode for constants
+def debug_asset_filter(_, path):
+    txt = Path(os.path.join(static_folder, "assets-manifest.json")).read_text()
+    return orjson.loads(txt).get(path)
+
+
+@cache  # jinja caches that if input is a constant, but to be sure we cache it here too
+def asset_filter(path):
+    return debug_asset_filter(None, path)
 
 
 class JinjaTemplates:
@@ -32,9 +51,11 @@ class JinjaTemplates:
         return cls.templates.get_template(template).render(**kwargs)
 
     @classmethod
-    def initialize(cls, template_path: str, auto_reload=False, **env_options) -> jinja2.Environment:
+    def initialize(cls, *, template_path: str, static_path=None, auto_reload=False, **env_options) -> jinja2.Environment:
+        global static_folder
+
         if not template_path:
-            msg = f"The template_folder must be specified."
+            msg = "The template_folder must be specified."
             raise cls.JinjaException(msg)
 
         if not os.path.isdir(template_path):
@@ -43,6 +64,14 @@ class JinjaTemplates:
 
         cls.templates = Jinja2Templates(directory=template_path, **env_options)
         cls.templates.env.auto_reload = auto_reload
+
+        static_folder = static_path
+
+        if settings.DEBUG:
+            cls.templates.env.filters["asset"] = debug_asset_filter
+        else:
+            cls.templates.env.filters["asset"] = asset_filter
+
         return cls.templates.env
 
 
