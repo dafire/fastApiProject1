@@ -12,7 +12,7 @@ const config = {
     entry: './src/index.js',
     output: {
         path: path.resolve(__dirname, '../static'),
-        filename: '[name]-[hash].js',
+        filename: '[name]-[contenthash].js',
     },
     plugins: [
         new CleanWebpackPlugin(),
@@ -20,7 +20,7 @@ const config = {
             // Options go here
         }),
         new MiniCssExtractPlugin({
-            filename: '[name]-[hash].css',
+            filename: '[name]-[contenthash].css',
         }),
     ],
     module: {

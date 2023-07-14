@@ -1,6 +1,5 @@
 
 .env
-
 alembic/__pycache__/
-
 *.pyc
+static/

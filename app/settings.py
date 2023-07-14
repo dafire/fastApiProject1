@@ -11,5 +11,5 @@ DATABASE_PASSWORD = config("DATABASE_PASSWORD", cast=Secret, default="")
 
 DATABASE_URL = config(
     "DATABASE_URL",
-    default=f"postgresql://postgres:{DATABASE_PASSWORD}@localhost/postgres",
+    default=f"postgresql://postgres:{DATABASE_PASSWORD}@localhost:5434/postgres",
 )

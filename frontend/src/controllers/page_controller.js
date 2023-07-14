@@ -57,7 +57,6 @@ export default class extends Controller {
     }
 
     toastTargetConnected(element) {
-        // console.log("connected toast", element)
         if (element.dataset.shown === "true") return;
         new Toast(element).show();
         element.addEventListener(

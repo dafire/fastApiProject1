@@ -3,12 +3,15 @@ from typing import Annotated
 from fastapi import APIRouter, Path
 
 from utils.jinja2_templates import Template
-
+from app.database import AsyncSession
+import sqlalchemy as sa
 web_router = APIRouter()
 
 
 @web_router.get("/")
-async def web_index(template: Template):
+async def web_index(template: Template, session: AsyncSession):
+    x = await session.execute(sa.text("SELECT 1"))
+    print(x)
     return template("index.html")
 
 

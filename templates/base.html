@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en" class="h-100" data-bs-theme="dark" data-controller="page">
+<head>
+    {% block head %}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="{{ request.url_for("static", path="main.js"|asset) }}" data-turbo-track="reload" defer></script>
+        <link rel="stylesheet" href="{{ request.url_for("static", path="main.css"|asset) }}" data-turbo-track="reload">
+        <meta name="turbo-cache-control" content="no-cache">
+        <link rel="icon" type="image/png" href="/web/static/favicon.png">
+        <title>{{ title|default("FastAPI") }}</title>
+    {% endblock %}
+</head>
+
+{% block body %}
+    <body data-controller="page">
+    {% block content %}{% endblock %}
+    <div data-page-target='toastArea' id='toastArea' class='position-absolute m-3 top-0 end-0'
+         data-turbo-permanent></div>
+    </body>
+{% endblock %}
+</html>

@@ -1,11 +1,11 @@
 from typing import AsyncGenerator, Annotated
-
+from sqlalchemy import event
 from fastapi import Depends
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession as _AsyncSession
+import time
 from . import settings
 
-__all__ = ["AsyncDBSession", "load_models"]
+__all__ = ["AsyncSession", "load_models"]
 
 async_engine = create_async_engine(
     settings.DATABASE_URL.replace("postgresql:", "postgresql+asyncpg:"),
@@ -20,13 +20,28 @@ async_session_maker = async_sessionmaker(
     expire_on_commit=False,
 )
 
+if settings.DEBUG:
+    def before_cursor_execute(conn, cursor, statement, parameters, context, executemany):
+        conn.info.setdefault('query_start_time', []).append(time.time())
+        print("Start Query:\n" + str(statement) % parameters + "\n")
 
-async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
-    async with async_session_maker() as session:
-        yield session
+
+    def after_cursor_execute(conn, cursor, statement, parameters, context, executemany):
+        total = time.time() - conn.info['query_start_time'].pop(-1)
+        print("Query Complete!\nTotal Time: %f" % total + "\n")
 
 
-AsyncDBSession = Annotated[AsyncSession, Depends(get_async_session)]
+    event.listen(async_engine.sync_engine, "before_cursor_execute", before_cursor_execute)
+    event.listen(async_engine.sync_engine, "after_cursor_execute", after_cursor_execute)
+
+
+    async def get_async_session() -> AsyncGenerator[_AsyncSession, None]:
+        async with async_session_maker() as session:
+            # event.listen(session.sync_session, "before_commit", my_before_commit)
+            yield session
+
+
+AsyncSession = Annotated[_AsyncSession, Depends(get_async_session)]
 
 
 def load_models():
