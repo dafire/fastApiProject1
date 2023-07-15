@@ -1,7 +1,9 @@
-from sqlalchemy import MetaData
-from sqlalchemy.orm import DeclarativeBase
+from datetime import datetime
 
-metadata = MetaData(
+from sqlalchemy import DateTime, MetaData
+from sqlalchemy.orm import DeclarativeBase, registry
+
+meta = MetaData(
     naming_convention={
         "ix": "ix_%(column_0_label)s",
         "uq": "uq_%(table_name)s_%(column_0_name)s",
@@ -14,4 +16,10 @@ metadata = MetaData(
 
 class Base(DeclarativeBase):
     __abstract__ = True
-    metadata = metadata
+    metadata = meta
+
+    registry = registry(
+        type_annotation_map={
+            datetime: DateTime(timezone=True),
+        },
+    )

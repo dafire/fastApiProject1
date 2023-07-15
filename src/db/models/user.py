@@ -1,7 +1,7 @@
 from uuid import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from .base import Base
+from db import Base
 
 
 class User(Base):

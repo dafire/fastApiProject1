@@ -6,7 +6,7 @@ from sqlalchemy import pool
 
 from app import settings
 from app.database import load_models
-from app.models.base import metadata
+from db.base import metadata
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

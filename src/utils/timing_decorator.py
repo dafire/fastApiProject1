@@ -12,7 +12,7 @@ __all__ = ["RecordTiming"]
 class _RecordTiming:
     def __init__(self, request: Request):
         self.request = request
-        self.enabled = settings.DEBUG
+        self.enabled = True
 
     def __call__(self, note: str | None = None):
         if self.enabled:

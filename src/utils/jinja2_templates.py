@@ -59,6 +59,7 @@ class JinjaTemplates:
         static_path=None,
         auto_reload=False,
         enable_async=True,
+        debug=False,
         **env_options,
     ) -> jinja2.Environment:
         global static_folder
@@ -76,7 +77,7 @@ class JinjaTemplates:
 
         static_folder = static_path
 
-        if settings.DEBUG:
+        if debug:
             cls.templates.env.filters["asset"] = debug_asset_filter
         else:
             cls.templates.env.filters["asset"] = asset_filter

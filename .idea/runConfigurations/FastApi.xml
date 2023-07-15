@@ -1,6 +1,8 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="FastApi" type="Python.FastAPI">
-    <option name="file" value="$PROJECT_DIR$/app/main.py" />
+    <option name="additionalOptions" value="--reload --factory --loop uvloop" />
+    <option name="appName" value="create_app" />
+    <option name="file" value="$PROJECT_DIR$/src/main.py" />
     <module name="fastApiProject1" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />

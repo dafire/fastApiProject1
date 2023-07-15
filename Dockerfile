@@ -46,4 +46,4 @@ COPY --from=frontend /usr/src/static ./static
 WORKDIR /var/www/app
 
 # command to run on container start
-CMD ["poetry", "run", "uvicorn", "main:app", "--proxy-headers", "--forwarded-allow-ips", "*","--host", "0.0.0.0", "--port", "8000"]
+CMD ["poetry", "run", "uvicorn", "--factory", "--loop", "uvloop", "app:create_app", "--proxy-headers", "--forwarded-allow-ips", "*","--host", "0.0.0.0", "--port", "8000"]
