@@ -5,8 +5,8 @@ export default class extends Controller {
 
     static targets = ["toast", "toastArea"];
 
-
     themeSwitch = async (e) => {
+
         this.element.setAttribute(
             "data-bs-theme",
             e.target.checked ? "dark" : "light"

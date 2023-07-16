@@ -23,7 +23,7 @@ class InterceptHandler(logging.Handler):
             level = record.levelno
 
         # Find caller from where originated the logged message
-        frame, depth = sys._getframe(6), 6
+        frame, depth = sys._getframe(6), 6  # noqa
         while frame.f_code.co_filename == logging.__file__:
             frame = frame.f_back
             depth += 1
@@ -78,16 +78,16 @@ def replace_log_handlers():
     for uvicorn_logger in loggers:
         uvicorn_logger.handlers = []
 
-    # loggers = (logging.getLogger(name) for name in logging.root.manager.loggerDict if name.startswith("sqlalchemy."))
-    # for sqla_logger in loggers:
-    #    sqla_logger.handlers = []
+    loggers = (logging.getLogger(name) for name in logging.root.manager.loggerDict if name.startswith("sqlalchemy."))
+    for sqla_logger in loggers:
+        sqla_logger.handlers = []
 
     intercept_handler = InterceptHandler()
-    # logging.getLogger("sqlalchemy").handlers = [intercept_handler]
 
     # change handler for default uvicorn logger
     logging.getLogger("uvicorn").handlers = [intercept_handler]
     logging.getLogger("uvicorn.access").handlers = [intercept_handler]
+    logging.getLogger("sqlalchemy").handlers = [intercept_handler]
     # set logs output, level and format
 
     # logger.configure(handlers=[{"sink": sys.stdout, "level": logging.DEBUG, "format": format_record}])

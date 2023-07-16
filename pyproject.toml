@@ -14,7 +14,7 @@ rich = "^13.3"
 asyncpg = "^0.28.0"
 sqlalchemy = "^2.0.9"
 orjson = "^3.8.8"
-pydantic =  {version= "^2.0.3", allow-prereleases= false}
+pydantic =  {extras = ["email"], version = "^2.0.3"}
 redis = {version= "^4.6.0", extras = ["hiredis"]}
 alembic = "^1.11.1"
 greenlet = "^2.0.2"
@@ -22,6 +22,8 @@ psycopg2-binary = "^2.9.6"
 jinja2 = "^3.1.2"
 loguru = "^0.7.0"
 pydantic-settings = "^2.0.2"
+authlib = "^1.2.1"
+httpx = "^0.24.1"
 
 [tool.poetry.group.dev.dependencies]
 black = {extras = ["d"], version = "^23.7.0"}

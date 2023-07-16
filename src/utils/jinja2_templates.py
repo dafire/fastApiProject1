@@ -12,15 +12,14 @@ from starlette.templating import Jinja2Templates, pass_context
 
 __all__ = ["JinjaTemplates", "Template"]
 
-import settings
+from settings import Settings, get_settings
 
-static_folder = "static"
+_settings = get_settings(Settings)
 
 
-##
 @pass_context  # context is required otherwise jinja2 caches the result in bytecode for constants
 async def debug_asset_filter(_, path):
-    txt = Path(os.path.join(static_folder, "assets-manifest.json")).read_text()
+    txt = Path(os.path.join(_settings.static_folder, "assets-manifest.json")).read_text()
     return orjson.loads(txt).get(path)
 
 
@@ -55,29 +54,23 @@ class JinjaTemplates:
     def initialize(
         cls,
         *,
-        template_path: str,
-        static_path=None,
-        auto_reload=False,
         enable_async=True,
-        debug=False,
         **env_options,
     ) -> jinja2.Environment:
         global static_folder
 
-        if not template_path:
+        if not _settings.template_folder:
             msg = "The template_folder must be specified."
             raise cls.JinjaException(msg)
 
-        if not os.path.isdir(template_path):
-            msg = f"The specified template folder must be a folder, it's not: {template_path}"
+        if not os.path.isdir(_settings.template_folder):
+            msg = f"The specified template folder must be a folder, it's not: {_settings.template_folder}"
             raise cls.JinjaException(msg)
 
-        cls.templates = Jinja2Templates(directory=template_path, enable_async=enable_async, **env_options)
-        cls.templates.env.auto_reload = auto_reload
-
-        static_folder = static_path
-
-        if debug:
+        cls.templates = Jinja2Templates(directory=_settings.template_folder, enable_async=enable_async, **env_options)
+        cls.templates.env.auto_reload = _settings.debug
+        cls.templates.env.globals["settings"] = _settings.model_dump(exclude={"secret_key"})
+        if _settings.debug:
             cls.templates.env.filters["asset"] = debug_asset_filter
         else:
             cls.templates.env.filters["asset"] = asset_filter

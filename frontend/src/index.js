@@ -1,4 +1,5 @@
-// Import our custom CSS
+// noinspection ES6UnusedImports
+
 import './scss/styles.scss'
 
 import * as Turbo from "@hotwired/turbo"

@@ -1,22 +1,20 @@
 from typing import Annotated
 
-import sqlalchemy as sa
-from fastapi import APIRouter, Path
+from fastapi import APIRouter, Depends, Path
 from starlette.requests import Request
 
 from db.dependencies import AsyncSession
+from router.login import login_required
 from utils.jinja2_templates import Template
 from utils.session_route import SessionRoute
 from utils.timing_decorator import RecordTiming
 
-web_router = APIRouter(route_class=SessionRoute)
+web_router = APIRouter(route_class=SessionRoute, dependencies=[Depends(login_required)])
 
 
 @web_router.get("/")
 async def web_index(template: Template, session: AsyncSession, timing: RecordTiming, request: Request):
     timing("start")
-    x = (await session.execute(sa.text("SELECT 1"))).scalar_one()
-    timing("sql")
     test = request.session.get("test", 0)
     test += 1
     request.session["test"] = test
@@ -25,7 +23,7 @@ async def web_index(template: Template, session: AsyncSession, timing: RecordTim
 
 @web_router.get("/page/{page}")
 async def web_page(template: Template, request: Request, page: Annotated[int, Path(..., title="Page")]):
-    test = request.session.get("test", 0)
+    test = request.session.get("test")
     return await template("index.html", page=page, test=test)
 
 

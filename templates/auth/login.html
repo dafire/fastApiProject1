@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+        b: {{ backends }}
+        {% for backend in backends %}
+            <a class="btn btn-sm btn-primary" href="{{ request.url_for("authorize_url", backend=backend) }}">{{ backend }}</a>
+        {% endfor %}
+
+    </div>
+{% endblock %}

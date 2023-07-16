@@ -1,2 +1,15 @@
-// Import all of Bootstrap's CSS
-@import "bootstrap/scss/bootstrap";
+@import "bootstrap";
+
+html, body {
+  /* min-height: 100%; */
+  overflow-y: scroll; /* Show vertical scrollbar */
+}
+
+main.user, div.user {
+  padding-top: 60px;
+}
+
+.bg-brand {
+  --bs-bg-opacity: 1;
+  background-color: $red-700 !important;
+}

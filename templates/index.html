@@ -1,4 +1,4 @@
-{% include "base.html" %}
+{% extends "base.html" %}
 
 
 {% block content %}
@@ -8,8 +8,7 @@
         <button class="btn btn-secondary" data-action="page#toast">Toast</button>
 
         <turbo-frame id="button">
-            <a href="{{ request.url_for("web_hello", name="Peter") }}" data-turbo-action="advance"
-               class="btn btn-primary">Primary
+            <a href="{{ request.url_for("web_hello", name="Peter") }}" class="btn btn-primary">Primary
                 button</a>
         </turbo-frame>
 
@@ -25,5 +24,6 @@
             <a href="{{ request.url_for("web_page", page="3") }}" class="btn btn-primary">3</a>
         </div>
 
+        <a class="btn btn-danger m-3" href="{{ request.url_for("logout") }}">Logout {{ request.user }}</a>
     </div>
 {% endblock %}

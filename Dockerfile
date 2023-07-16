@@ -38,7 +38,7 @@ ARG GIT_VERSION=develop
 ENV GIT_VERSION=${GIT_VERSION}
 
 # copy the content of the local src directory to the working directory
-COPY --chown=www-data app/ /var/www/app
+COPY --chown=www-data src/ /var/www/app
 COPY --chown=www-data templates/ /var/www/templates
 
 COPY --from=frontend /usr/src/static ./static

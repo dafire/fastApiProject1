@@ -4,6 +4,7 @@
     {% block head %}
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="{{ request.url_for("static", path="vendors.js"|asset) }}" data-turbo-track="reload" defer></script>
         <script src="{{ request.url_for("static", path="main.js"|asset) }}" data-turbo-track="reload" defer></script>
         <link rel="stylesheet" href="{{ request.url_for("static", path="main.css"|asset) }}" data-turbo-track="reload">
         <meta name="turbo-cache-control" content="no-cache">
@@ -14,9 +15,17 @@
 
 {% block body %}
     <body data-controller="page">
-    {% block content %}{% endblock %}
-    <div data-page-target='toastArea' id='toastArea' class='position-absolute m-3 top-0 end-0'
+    {%- if request.user %}{% include "navbar.html" %}{% endif -%}
+
+    <main class="flex-shrink-0{{ " user" if request.user }}">
+        {%- block content %}{% endblock -%}
+    </main>
+    <div data-page-target='toastArea' id='toastArea'
+         class='position-fixed m-3 top-0 end-0{{ " user" if request.user }}'
          data-turbo-permanent></div>
+    {% if settings.debug %}
+        <div class="font-monospace p-1 m-3" style="border: 2px solid red;">{{ request.session|pprint }}</div>
+    {% endif %}
     </body>
 {% endblock %}
 </html>
