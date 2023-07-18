@@ -3,30 +3,32 @@ import {Controller} from "@hotwired/stimulus"
 import {Toast} from "bootstrap/dist/js/bootstrap";
 
 export default class PageController extends Controller {
-    static targets = ["toast", "toastArea"];
-    static values = {websocketUrl: String};
     private static websocket?: WebSocket;
+    private static reconnector?: NodeJS.Timeout;
     private static shouldReconnect: boolean;
     declare readonly websocketUrlValue: string
     declare readonly hasWebsocketUrlValue: boolean
     declare readonly hasToastAreaTarget: boolean
     declare readonly toastAreaTarget: HTMLDivElement
+    declare readonly hasSocketStatusTarget: boolean
+    declare readonly socketStatusTarget: HTMLLinkElement
     private openHandler: EventListener;
     private closeHandler: EventListener;
     private errorHandler: EventListener;
     private messageHandler: EventListener;
 
     connect() {
-        console.log("Hello, Stimulus!", this.hasWebsocketUrlValue, this.element);
         if (this.hasWebsocketUrlValue) {
             PageController.shouldReconnect = true;
-            if (!PageController.websocket) PageController.websocket = this.createWebsocket();
-            else this.websocketBindEvents(PageController.websocket);
+            if (!PageController.websocket) PageController.websocket = this.createWebsocket(); else this.websocketBindEvents(PageController.websocket);
         } else {
             PageController.shouldReconnect = false;
             if (PageController.websocket) PageController.websocket.close();
         }
     }
+
+    static targets = ["toast", "toastArea", "socketStatus"];
+    static values = {websocketUrl: String};
 
     toast() {
         this.addToast("Hello, Stimulus!", "Hello", "Stimulus");
@@ -35,7 +37,7 @@ export default class PageController extends Controller {
     addToastEvent(event: CustomEvent) {
         console.log("addToastEvent", event, event.detail);
         const detail = event.detail ?? {};
-        this.addToast(detail.message, detail.title, detail.subtitle, detail.headerClass);
+        this.addToast(detail.websocketOnMessage, detail.title, detail.subtitle, detail.headerClass);
     }
 
     addToast(message: string, title = "test", subtitle = "", header_class = "") {
@@ -64,27 +66,45 @@ export default class PageController extends Controller {
         element.setAttribute("data-shown", "true");
     }
 
-    private message(evt: MessageEvent) {
+
+    private websocketOnMessage(evt: MessageEvent) {
         console.log("Message received!", evt)
     }
 
     private websocketOnOpen() {
         console.log("Socket connected!");
+        this.updateConnectionStatus();
     }
 
     private websocketOnError() {
         console.error("Socket error!");
+        this.updateConnectionStatus();
     };
+
+    private updateConnectionStatus() {
+        if (this.hasSocketStatusTarget) {
+            this.socketStatusTarget.classList.remove("bi-wifi-off", "bi-wifi");
+            if (PageController.websocket) {
+                switch (PageController.websocket.readyState) {
+                    case WebSocket.OPEN:
+                        this.socketStatusTarget.classList.add("bi-wifi");
+                        break;
+                    default:
+                        this.socketStatusTarget.classList.add("bi-wifi-off");
+                }
+            }
+        }
+    }
 
     private websocketOnClose(event: CloseEvent) {
         this.websocketUnbindEvents(PageController.websocket);
-        console.log("Socket closed! Reconnecting ...", PageController.shouldReconnect);
+        PageController.websocket = undefined
         if (PageController.shouldReconnect) {
-            PageController.websocket = this.createWebsocket();
-        } else {
-            PageController.websocket = undefined
+            PageController.reconnector = setTimeout(() => {
+                if (PageController.shouldReconnect) PageController.websocket = this.createWebsocket();
+            }, 500);
         }
-
+        this.updateConnectionStatus();
     };
 
     private createWebsocket() {
@@ -108,7 +128,7 @@ export default class PageController extends Controller {
         socket.addEventListener("close", this.closeHandler);
         this.errorHandler = this.websocketOnError.bind(this);
         socket.addEventListener("error", this.errorHandler);
-        this.messageHandler = this.message.bind(this);
+        this.messageHandler = this.websocketOnMessage.bind(this);
         socket.addEventListener("message", this.messageHandler);
     }
 

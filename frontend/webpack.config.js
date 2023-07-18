@@ -9,7 +9,10 @@ const {CleanWebpackPlugin} = require("clean-webpack-plugin");
 
 
 const config = {
-    entry: "./src/index.ts",
+    entry: {
+        main: "./src/index.ts",
+        icons: "./src/scss/icons.scss",
+    },
     output: {
         path: path.resolve(__dirname, "../static"),
         filename: "[name]-[contenthash].js",
@@ -18,7 +21,7 @@ const config = {
         extensions: [".tsx", ".ts", ".js"],
     },
     plugins: [
-        new CleanWebpackPlugin(),
+       // new CleanWebpackPlugin(),
         new WebpackAssetsManifest({
             // Options go here
         }),
@@ -56,8 +59,11 @@ const config = {
                     },
                     {
                         // Loads a SASS/SCSS file and compiles it to CSS
-                        loader: "sass-loader"
-                    }
+                        loader: "sass-loader",
+                        options: {
+                            additionalData: "$brand-color: #4377FF;", // TODO: set during build job
+                        },
+                    },
                 ]
             },
             {
@@ -65,6 +71,26 @@ const config = {
                 use: "ts-loader",
                 exclude: /node_modules/,
             },
+            /* {
+                 test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+                 use: [
+                     {
+                         loader: "file-loader",
+                         options: {
+                             name: "[name].[contentHash].[ext]",
+                             outputPath: "file/"
+                         }
+                     }
+                 ]
+             },*/
+            /* {
+                 mimetype: "image/svg+xml",
+                 scheme: "data",
+                 type: "asset/resource",
+                 generator: {
+                     filename: "icons/[hash].svg"
+                 }
+             } */
         ]
     },
 

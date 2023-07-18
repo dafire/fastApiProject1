@@ -4,7 +4,6 @@ from typing import TypeVar
 from urllib.parse import quote_plus
 
 import dotenv
-from loguru import logger
 from pydantic import AnyUrl, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -15,9 +14,7 @@ TSettings = TypeVar("TSettings", bound=BaseSettings)
 
 @lru_cache()
 def get_settings(cls: type[TSettings]) -> TSettings:
-    res = dotenv.load_dotenv(".env")
-    if res:
-        logger.debug("Loaded .env file for '{}'", cls.__name__)
+    dotenv.load_dotenv(".env")
     return cls()
 
 
@@ -29,6 +26,8 @@ class Settings(BaseSettings):
     template_folder: str = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "templates"))
 
     redis_url: AnyUrl = Field(default="redis://localhost:6382/0")
+
+    brand_color: str = Field(default="#7289DA")
 
 
 class DatabaseSettings(BaseSettings):

@@ -12,12 +12,11 @@
                         <a class="nav-link active" aria-current="page" href="#">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Features</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="#">Pricing</a>
                     </li>
                 </ul>
+                <span id="connection_status" class="nav-item me-2 text-white" data-turbo-permanent><i
+                       data-page-target="socketStatus" style="font-size: 1.5rem" class="bi bi-wifi-off"></i></span>
                 <span class="nav-item"><a class="nav-link" href="{{ request.url_for("logout") }}">Logout</a></span>
             </div>
         </div>

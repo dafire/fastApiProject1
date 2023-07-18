@@ -1,15 +1,15 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Path
-from loguru import logger
 from starlette.requests import Request
-from starlette.websockets import WebSocket, WebSocketDisconnect
+from starlette.websockets import WebSocket
 
 from db.dependencies import AsyncSession
 from router.login import login_required
 from utils.jinja2_templates import Template
 from utils.session_route import SessionRoute
 from utils.timing_decorator import RecordTiming
+from utils.websocket_manager import WebsocketManagerDependency
 
 web_router = APIRouter(route_class=SessionRoute, dependencies=[Depends(login_required)])
 
@@ -17,10 +17,7 @@ web_router = APIRouter(route_class=SessionRoute, dependencies=[Depends(login_req
 @web_router.get("/")
 async def web_index(template: Template, session: AsyncSession, timing: RecordTiming, request: Request):
     timing("start")
-    test = request.session.get("test", 0)
-    test += 1
-    request.session["test"] = test
-    return await template("index.html", test=test)
+    return await template("index.html")
 
 
 @web_router.get("/page/{page}")
@@ -35,13 +32,5 @@ async def web_hello(template: Template, name: Annotated[str, Path(..., title="Na
 
 
 @web_router.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    # await websocket_manager.connect(websocket, user)
-    await websocket.accept()
-    try:
-        while True:
-            data = await websocket.receive_json()
-            logger.debug("incoming websocket data {}", data)
-    except WebSocketDisconnect:
-        pass
-        # websocket_manager.disconnect(websocket)
+async def websocket_endpoint(websocket: WebSocket, manager: WebsocketManagerDependency):
+    await manager.register_socket(websocket)

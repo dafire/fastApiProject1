@@ -19,6 +19,7 @@
     "autoprefixer": "^10.4.14",
     "clean-webpack-plugin": "^4.0.0",
     "css-loader": "^6.8.1",
+    "file-loader": "^6.2.0",
     "mini-css-extract-plugin": "^2.7.6",
     "postcss-loader": "^7.3.3",
     "sass": "^1.63.6",
@@ -37,6 +38,7 @@
     "@popperjs/core": "^2.11.8",
     "@types/bootstrap": "^5.2.6",
     "@types/webpack-env": "^1.18.1",
-    "bootstrap": "^5.3.0"
+    "bootstrap": "^5.3.0",
+    "bootstrap-icons": "^1.10.5"
   }
 }

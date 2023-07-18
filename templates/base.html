@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="h-100" data-bs-theme="dark" >
+<html lang="en" class="h-100" data-bs-theme="dark" data-controller="page" {% if request.user %}data-page-websocket-url-value="{{ request.url_for("websocket_endpoint") }}"{% endif %}>
 <head>
     {% block head %}
         <meta charset="utf-8">
@@ -7,25 +7,28 @@
         <script src="{{ request.url_for("static", path="vendors.js"|asset) }}" data-turbo-track="reload" defer></script>
         <script src="{{ request.url_for("static", path="main.js"|asset) }}" data-turbo-track="reload" defer></script>
         <link rel="stylesheet" href="{{ request.url_for("static", path="main.css"|asset) }}" data-turbo-track="reload">
+        <link rel="stylesheet" href="{{ request.url_for("static", path="icons.css"|asset) }}" data-turbo-track="reload">
         <meta name="turbo-cache-control" content="no-cache">
+        <meta name="theme-color" content="{{ settings.brand_color }}">
         <link rel="icon" type="image/png" href="/web/static/favicon.png">
         <title>{{ title|default("FastAPI") }}</title>
     {% endblock %}
 </head>
 
 {% block body %}
-    <body data-controller="page" {% if request.user %}data-page-websocket-url-value="{{ request.url_for("websocket_endpoint") }}"{% endif %}>
+    <body>
     {%- if request.user %}{% include "navbar.html" %}{% endif -%}
 
     <main class="flex-shrink-0{{ " user" if request.user }}">
         {%- block content %}{% endblock -%}
     </main>
+
     <div data-page-target='toastArea' id='toastArea'
          class='position-fixed m-3 top-0 end-0{{ " user" if request.user }}'
          data-turbo-permanent></div>
-    {% if settings.debug %}
+    {%- if False -%}
         <div class="font-monospace p-1 m-3" style="border: 2px solid red;">{{ request.session|pprint }}</div>
-    {% endif %}
+    {%- endif -%}
     </body>
 {% endblock %}
 </html>
