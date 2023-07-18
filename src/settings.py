@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     static_folder: str = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "static"))
     template_folder: str = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "templates"))
 
-    redis_url: AnyUrl = Field(default="redis://localhost:6379/0")
+    redis_url: AnyUrl = Field(default="redis://localhost:6382/0")
 
 
 class DatabaseSettings(BaseSettings):

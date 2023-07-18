@@ -19,6 +19,8 @@ def create_web_app():
 
     app = FastAPI(debug=settings.debug, lifespan=lifespan)
 
+    logger.info("Debug mode: {}", settings.debug)
+
     app.add_middleware(CommitSessionMiddleware)
 
     if settings.debug:

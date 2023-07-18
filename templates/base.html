@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="h-100" data-bs-theme="dark" data-controller="page">
+<html lang="en" class="h-100" data-bs-theme="dark" >
 <head>
     {% block head %}
         <meta charset="utf-8">
@@ -14,7 +14,7 @@
 </head>
 
 {% block body %}
-    <body data-controller="page">
+    <body data-controller="page" {% if request.user %}data-page-websocket-url-value="{{ request.url_for("websocket_endpoint") }}"{% endif %}>
     {%- if request.user %}{% include "navbar.html" %}{% endif -%}
 
     <main class="flex-shrink-0{{ " user" if request.user }}">

@@ -3,6 +3,9 @@
   <component name="Black">
     <option name="sdkUUID" value="f1514431-314e-42d2-8d79-b42fd2040c7c" />
   </component>
+  <component name="JavaScriptSettings">
+    <option name="languageLevel" value="ES6" />
+  </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="Poetry (fastapiproject1)" project-jdk-type="Python SDK" />
   <component name="PythonCompatibilityInspectionAdvertiser">
     <option name="version" value="3" />

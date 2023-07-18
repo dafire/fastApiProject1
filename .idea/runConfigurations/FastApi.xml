@@ -1,12 +1,12 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="FastApi" type="Python.FastAPI">
-    <option name="additionalOptions" value="--reload --factory --loop uvloop" />
+    <option name="additionalOptions" value="--reload --factory --loop uvloop --port 7000" />
     <option name="appName" value="create_app" />
     <option name="file" value="$PROJECT_DIR$/src/main.py" />
     <module name="fastApiProject1" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
-    <option name="SDK_HOME" value="$USER_HOME$/Library/Caches/pypoetry/virtualenvs/fastapiproject1-4bVKeDhv-py3.11/bin/python" />
+    <option name="SDK_HOME" value="$USER_HOME$/Library/Caches/pypoetry/virtualenvs/fastapiproject1-THUL1pdP-py3.11/bin/python" />
     <option name="SDK_NAME" value="Poetry (fastapiproject1)" />
     <option name="WORKING_DIRECTORY" value="" />
     <option name="IS_MODULE_SDK" value="false" />

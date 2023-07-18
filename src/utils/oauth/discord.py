@@ -45,7 +45,13 @@ class Google(OAuthBase):
     config = dict(
         client_id=_settings.google_client_id,
         client_secret=_settings.google_client_secret,
-        server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+
+        access_token_url="https://oauth2.googleapis.com/token",
+        # api_base_url="",
+        authorize_url="https://accounts.google.com/o/oauth2/v2/auth",
+        userinfo_endpoint="https://openidconnect.googleapis.com/v1/userinfo",
+        jwks_uri="https://www.googleapis.com/oauth2/v3/certs",
+        # server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
         client_kwargs={"scope": "openid email profile"},
     )
 

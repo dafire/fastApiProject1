@@ -7,6 +7,7 @@ from fastapi import APIRouter, HTTPException, Path
 from starlette import status
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
+from starlette.websockets import WebSocket
 
 from db.models import User
 from dependencies.user_social_auth_service import UserSocialAuthDependency
@@ -22,10 +23,12 @@ _backends: {str: OAuthBase} = {"google": Google, "discord": Discord}
 router = APIRouter(route_class=SessionRoute, prefix="/auth")
 
 
-async def login_required(request: Request) -> User:
-    if not request.user or not request.user.active:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-    return request.user
+async def login_required(request: Request = None, websocket: WebSocket = None) -> User | None:
+    if websocket:
+        return None
+    if request and request.user and request.user.active:
+        return request.user
+    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
 
 @router.get("/")
@@ -39,7 +42,7 @@ async def logout(request: Request):
     return RedirectResponse(request.url_for("login"), status_code=status.HTTP_303_SEE_OTHER)
 
 
-@router.get("/login/{{backend}}")
+@router.get("/login/{backend}")
 async def authorize_url(request: Request, backend: Annotated[str, Path(...)]):
     if backend not in _backends:
         return HTTPException(status_code=status.HTTP_404_NOT_FOUND)
@@ -47,7 +50,8 @@ async def authorize_url(request: Request, backend: Annotated[str, Path(...)]):
     oauth.register(name=backend, **_backends[backend].config)
     oauth_client = getattr(oauth, backend)
     redirect_uri = request.url_for("authorize", backend=backend)
-    return await oauth_client.authorize_redirect(request, redirect_uri)
+    response = await oauth_client.authorize_redirect(request, redirect_uri)
+    return response
 
 
 @router.get("/{backend}")

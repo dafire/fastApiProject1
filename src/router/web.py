@@ -1,7 +1,9 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Path
+from loguru import logger
 from starlette.requests import Request
+from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from db.dependencies import AsyncSession
 from router.login import login_required
@@ -30,3 +32,16 @@ async def web_page(template: Template, request: Request, page: Annotated[int, Pa
 @web_router.get("/hello/{name}")
 async def web_hello(template: Template, name: Annotated[str, Path(..., title="Name")]):
     return await template("hello.html", name=name)
+
+
+@web_router.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    # await websocket_manager.connect(websocket, user)
+    await websocket.accept()
+    try:
+        while True:
+            data = await websocket.receive_json()
+            logger.debug("incoming websocket data {}", data)
+    except WebSocketDisconnect:
+        pass
+        # websocket_manager.disconnect(websocket)
