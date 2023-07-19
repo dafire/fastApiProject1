@@ -58,7 +58,7 @@ class DatabaseSettings(BaseSettings):
 
 
 class AuthSettings(BaseSettings):
-    google_client_id: str | None
-    google_client_secret: str | None
-    discord_client_id: str | int | None
-    discord_client_secret: str | None
+    google_client_id: str | None = None
+    google_client_secret: str | None = None
+    discord_client_id: str | int | None = None
+    discord_client_secret: str | None = None

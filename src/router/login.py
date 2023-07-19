@@ -14,13 +14,12 @@ from dependencies.user_social_auth_service import UserSocialAuthDependency
 from settings import AuthSettings, get_settings
 from utils.jinja2_templates import Template
 from utils.oauth.discord import Discord, Google, OAuthBase
-from utils.session_route import SessionRoute
 
 _settings = get_settings(AuthSettings)
 
 _backends: {str: OAuthBase} = {"google": Google, "discord": Discord}
 
-router = APIRouter(route_class=SessionRoute, prefix="/auth")
+router = APIRouter(prefix="/auth")
 
 
 async def login_required(request: Request = None, websocket: WebSocket = None) -> User | None:

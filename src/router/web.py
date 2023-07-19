@@ -7,11 +7,10 @@ from starlette.websockets import WebSocket
 from db.dependencies import AsyncSession
 from router.login import login_required
 from utils.jinja2_templates import Template
-from utils.session_route import SessionRoute
 from utils.timing_decorator import RecordTiming
 from utils.websocket_manager import WebsocketManagerDependency
 
-web_router = APIRouter(route_class=SessionRoute, dependencies=[Depends(login_required)])
+web_router = APIRouter(dependencies=[Depends(login_required)])
 
 
 @web_router.get("/")

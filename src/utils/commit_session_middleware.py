@@ -2,7 +2,7 @@ from loguru import logger
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 
-class CommitSessionMiddleware:
+class CommitDatabaseSessionMiddleware:
     def __init__(
         self,
         app: ASGIApp,
