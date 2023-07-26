@@ -3,7 +3,6 @@ from typing import Annotated
 from fastapi import Depends
 from starlette.requests import Request
 
-import settings
 from utils.timing_middleware import record_timing
 
 __all__ = ["RecordTiming"]

@@ -11,6 +11,7 @@ main.user, div.user {
 
 .bg-brand {
   --bs-bg-opacity: 1;
+
   @if variable-exists(brand-color) {
     background-color: $brand-color !important; // brand-color is defined from webpack
   } @else {

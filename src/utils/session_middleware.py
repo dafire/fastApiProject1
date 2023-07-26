@@ -112,24 +112,18 @@ class SessionMiddleware:
                 if scope["session"]:
                     # We have session data to persist.
                     headers = MutableHeaders(scope=message)
-                    header_value = "{session_cookie}={data}; path={path}; {max_age}{security_flags}".format(
-                        session_cookie=self.session_cookie,
-                        data=session_id,
-                        path=self.path,
-                        max_age=f"Max-Age={self.max_age}; " if self.max_age else "",
-                        security_flags=self.security_flags,
+                    header_value = (
+                        f"{self.session_cookie}={session_id}; path={self.path}; {f'Max-Age={self.max_age}; ' if self.max_age else ''}"
+                        f"{self.security_flags}"
                     )
                     headers.append("Set-Cookie", header_value)
-                    saved = await scope["session"].save(session_id, duration=self.max_age, force=True)
+                    await scope["session"].save(session_id, duration=self.max_age, force=True)
                 elif not initial_session_was_empty:
                     # The session has been cleared.
                     headers = MutableHeaders(scope=message)
-                    header_value = "{session_cookie}={data}; path={path}; {expires}{security_flags}".format(  # noqa E501
-                        session_cookie=self.session_cookie,
-                        data="null",
-                        path=self.path,
-                        expires="expires=Thu, 01 Jan 1970 00:00:00 GMT; ",
-                        security_flags=self.security_flags,
+                    header_value = (
+                        f"{self.session_cookie}={'null'}; path={self.path}; {'expires=Thu, 01 Jan 1970 00:00:00 GMT; '}"
+                        f"{self.security_flags}"
                     )
                     headers.append("Set-Cookie", header_value)
                     await scope["session"].delete(session_id)
