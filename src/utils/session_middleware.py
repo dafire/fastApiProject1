@@ -8,7 +8,7 @@ from starlette.requests import HTTPConnection
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from db.dependencies import Redis
-from db.models import User
+from dependencies.user_social_auth_service import UserService
 
 
 class SessionDict(dict):
@@ -103,7 +103,7 @@ class SessionMiddleware:
                     logger.info("Session loaded from redis [{}] {}", session_id, scope["session"])
                     initial_session_was_empty = False
                     if user_data := scope["session"].get("user"):
-                        scope["user"] = User(**user_data)
+                        scope["user"] = await UserService.load_user_from_session(user_data)
                 else:
                     logger.warning("Session not found in redis {}", session_id)
 

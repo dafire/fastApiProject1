@@ -10,7 +10,7 @@ from starlette.responses import RedirectResponse
 from starlette.websockets import WebSocket
 
 from db.models import User
-from dependencies.user_social_auth_service import UserSocialAuthDependency
+from dependencies.user_social_auth_service import UserServiceDependency
 from settings import AuthSettings, get_settings
 from utils.jinja2_templates import Template
 from utils.oauth.discord import Discord, Google, OAuthBase
@@ -54,7 +54,7 @@ async def authorize_url(request: Request, backend: Annotated[str, Path(...)]):
 
 
 @router.get("/{backend}")
-async def authorize(request: Request, backend: Annotated[str, Path(...)], user_auth_service: UserSocialAuthDependency):
+async def authorize(request: Request, backend: Annotated[str, Path(...)], user_auth_service: UserServiceDependency):
     if backend not in _backends:
         return HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     try:

@@ -1,13 +1,16 @@
+from datetime import datetime
 from typing import Annotated
 
 from fastapi import Depends
 from pydantic import BaseModel, EmailStr
+from rich.pretty import pprint
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.orm import joinedload
 
 from db.dependencies import AsyncSession
 from db.models import User, UserSocialAuth
+from db.models.user import CachedUser
 
 
 class UserInfo(BaseModel):
@@ -17,8 +20,11 @@ class UserInfo(BaseModel):
     locale: str
 
 
-class UserSocialAuthService:
+class UserService:
     class CouldNotCreateUser(Exception):
+        pass
+
+    class UserDisabled(Exception):
         pass
 
     def __init__(self, session: AsyncSession) -> None:
@@ -28,10 +34,13 @@ class UserSocialAuthService:
         stmt = select(UserSocialAuth).filter_by(**kwargs)
         return (await self._session.execute(stmt)).scalar_one()
 
-    async def login_or_create_user(self, *, service: str, userinfo: UserInfo) -> UserSocialAuth:
+    async def login_or_create_user(self, *, service: str, userinfo: UserInfo) -> CachedUser:
         stmt = select(UserSocialAuth).filter_by(service=service, sub=userinfo.sub).options(joinedload(UserSocialAuth.user))
         try:
-            return (await self._session.execute(stmt)).scalar_one()
+            instance = (await self._session.execute(stmt)).scalar_one()
+            if not instance.user.active:
+                raise self.UserDisabled()
+            return CachedUser.model_validate(instance)
         except NoResultFound:
             user = User(email=userinfo.email)
             instance = UserSocialAuth(service=service, user=user, **userinfo.model_dump())
@@ -39,13 +48,23 @@ class UserSocialAuthService:
                 self._session.add(user)
                 self._session.add(instance)
                 await self._session.commit()
-                return instance
+                return CachedUser.model_validate(instance)
             except IntegrityError as e:
                 await self._session.rollback()
                 try:
-                    return (await self._session.execute(stmt)).scalar_one()
+                    instance = (await self._session.execute(stmt)).scalar_one()
+                    if not instance.user.active:
+                        raise self.UserDisabled()
+                    return CachedUser.model_validate(instance)
                 except NoResultFound:
                     raise self.CouldNotCreateUser from e
 
+    @classmethod
+    async def load_user_from_session(cls, session_data: dict) -> CachedUser | None:
+        user = CachedUser(**session_data)
+        pprint(user)
+        print(datetime.utcnow() - user.loaded_at)
+        return user
 
-UserSocialAuthDependency = Annotated[UserSocialAuthService, Depends(UserSocialAuthService)]
+
+UserServiceDependency = Annotated[UserService, Depends(UserService)]
