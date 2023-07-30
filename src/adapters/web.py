@@ -21,6 +21,14 @@ def create_web_app():
 
     replace_log_handlers()
 
+    if settings.sentry_dsn:
+        import sentry_sdk
+
+        sentry_sdk.init(
+            dsn=settings.sentry_dsn,
+            traces_sample_rate=1.0 if settings.debug else 0.0,
+        )
+
     middlewares = [
         Middleware(SessionMiddleware, secret_key=settings.secret_key, path="/", session_cookie="session_id"),
         Middleware(CommitDatabaseSessionMiddleware),

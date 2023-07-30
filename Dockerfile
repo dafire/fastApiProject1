@@ -38,6 +38,8 @@ ARG GIT_VERSION=develop
 ENV GIT_VERSION=${GIT_VERSION}
 
 # copy the content of the local src directory to the working directory
+COPY --chown=www-data alembic/ /var/www/alembic
+COPY --chown=www-data alembic.ini/ /var/www/alembic.ini
 COPY --chown=www-data src/ /var/www/app
 COPY --chown=www-data templates/ /var/www/templates
 
@@ -46,4 +48,4 @@ COPY --from=frontend /usr/src/static ./static
 WORKDIR /var/www/app
 
 # command to run on container start
-CMD ["poetry", "run", "uvicorn", "--factory", "--loop", "uvloop", "main:create_app", "--proxy-headers", "--forwarded-allow-ips", "*","--host", "0.0.0.0", "--port", "8000"]
+CMD ["poetry", "run", "uvicorn", "--factory", "--loop", "uvloop", "main:create_app", "--proxy-headers", "--forwarded-allow-ips", "*", "--host", "0.0.0.0", "--port", "8000"]

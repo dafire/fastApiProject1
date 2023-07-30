@@ -29,6 +29,8 @@ class Settings(BaseSettings):
 
     brand_color: str = Field(default="#7289DA")
 
+    sentry_dsn: str | None = None
+
 
 class DatabaseSettings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="database_")
