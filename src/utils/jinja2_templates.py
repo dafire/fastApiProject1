@@ -1,10 +1,10 @@
 import os
-from functools import cache
 from pathlib import Path
 from typing import Annotated
 
 import jinja2
 import orjson
+from async_lru import alru_cache
 from fastapi import Depends
 from starlette.requests import Request
 from starlette.responses import HTMLResponse
@@ -23,7 +23,7 @@ async def debug_asset_filter(_, path):
     return orjson.loads(txt).get(path)
 
 
-@cache  # jinja caches that if input is a constant, but to be sure we cache it here too
+@alru_cache(maxsize=32)  # jinja caches that if input is a constant, but to be sure we cache it here too
 async def asset_filter(path):
     return await debug_asset_filter(None, path)
 
