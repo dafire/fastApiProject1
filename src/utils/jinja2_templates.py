@@ -4,7 +4,6 @@ from typing import Annotated
 
 import jinja2
 import orjson
-from async_lru import alru_cache
 from fastapi import Depends
 from starlette.requests import Request
 from starlette.responses import HTMLResponse
@@ -21,11 +20,6 @@ _settings = get_settings(Settings)
 async def debug_asset_filter(_, path):
     txt = Path(os.path.join(_settings.static_folder, "assets-manifest.json")).read_text()
     return orjson.loads(txt).get(path)
-
-
-@alru_cache(maxsize=32)  # jinja caches that if input is a constant, but to be sure we cache it here too
-async def asset_filter(path):
-    return await debug_asset_filter(None, path)
 
 
 class JinjaTemplates:
@@ -70,10 +64,8 @@ class JinjaTemplates:
         cls.templates = Jinja2Templates(directory=_settings.template_folder, enable_async=enable_async, **env_options)
         cls.templates.env.auto_reload = _settings.debug
         cls.templates.env.globals["settings"] = _settings.model_dump(exclude={"secret_key"})
-        if _settings.debug:
-            cls.templates.env.filters["asset"] = debug_asset_filter
-        else:
-            cls.templates.env.filters["asset"] = asset_filter
+
+        cls.templates.env.filters["asset"] = debug_asset_filter
 
         return cls.templates.env
 
