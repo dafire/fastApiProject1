@@ -1,32 +1,14 @@
-name: Docker image single
+name: Docker image Multi
+
 permissions: write-all
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "mainX" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "mainX" ]
 
 jobs:
-
-  frontend:
-    runs-on: ubuntu-latest
-    steps:
-      -
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      -
-        run: |
-          cd frontend
-          npm install
-          npm run build:prod
-      -
-        uses: actions/upload-artifact@v3
-        with:
-          path: src/static/
-
-
   build:
     runs-on: ubuntu-latest
     steps:
@@ -34,10 +16,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      -
-        uses: actions/download-artifact@v3
-        with:
-          path: src/static/
       -
         name: Set the git version to env
         id: put_gitversion_to_env
@@ -67,7 +45,7 @@ jobs:
           platforms: linux/aarch64
           load: false
           push: true
-          file: Dockerfile
+          file: Dockerfile.multi
           tags: ghcr.io/${{ env.lowercase_repo }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max

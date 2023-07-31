@@ -17,7 +17,7 @@ _settings = get_settings(Settings)
 
 
 @pass_context  # context is required otherwise jinja2 caches the result in bytecode for constants
-async def debug_asset_filter(_, path):
+def debug_asset_filter(_, path):
     txt = Path(os.path.join(_settings.static_folder, "assets-manifest.json")).read_text()
     return orjson.loads(txt).get(path)
 
