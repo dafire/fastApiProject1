@@ -40,6 +40,9 @@ jobs:
         with:
           path: static/
       -
+        run: |
+          find .
+      -
         name: Set the git version to env
         id: put_gitversion_to_env
         run: |
