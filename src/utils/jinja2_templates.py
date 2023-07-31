@@ -25,7 +25,7 @@ async def debug_asset_filter(_, path):
 
 @cache  # jinja caches that if input is a constant, but to be sure we cache it here too
 async def asset_filter(path):
-    return debug_asset_filter(None, path)
+    return await debug_asset_filter(None, path)
 
 
 class JinjaTemplates:

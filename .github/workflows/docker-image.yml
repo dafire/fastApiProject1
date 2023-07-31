@@ -45,6 +45,7 @@ jobs:
           platforms: linux/aarch64
           load: false
           push: true
+          file: Dockerfile.multi
           tags: ghcr.io/${{ env.lowercase_repo }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
