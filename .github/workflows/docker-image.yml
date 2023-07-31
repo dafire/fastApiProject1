@@ -18,12 +18,14 @@ jobs:
           fetch-depth: 0
       -
         run: |
-          cd frontend
-          npm install
-          npm run build:prod
+          cd frontend && npm install
+      -
+        run: |
+          cd frontend && npm run build:prod
       -
         uses: actions/upload-artifact@v3
         with:
+          name: static
           path: static/
 
 
@@ -37,8 +39,6 @@ jobs:
           fetch-depth: 0
       -
         uses: actions/download-artifact@v3
-        with:
-          path: static/
       -
         run: |
           find .
