@@ -1,14 +1,12 @@
-import os.path
-import sys
 from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-from settings import DatabaseSettings, get_settings  # noqa
-from db.base import meta  # noqa
 import db.models  # noqa
+from db.base import meta  # noqa
+from settings import DatabaseSettings, get_settings  # noqa
 
 _settings = get_settings(DatabaseSettings)
 
