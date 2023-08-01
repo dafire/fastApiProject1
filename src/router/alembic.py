@@ -1,15 +1,32 @@
 import io
 import re
-
-from alembic.config import Config
-from fastapi import APIRouter
+from typing import Annotated
 
 from alembic import command
+from alembic.config import Config
+from fastapi import APIRouter, Body
+from pydantic import BaseModel
 
-router = APIRouter()
+alembic_router = APIRouter()
 
 
-@router.get("/history")
+class AlembicUpgrade(BaseModel):
+    revision: str
+
+
+@alembic_router.post("/upgrade")
+def alembic_upgrade(body: Annotated[AlembicUpgrade, Body(...)]):
+    alembic_cfg = Config("alembic.ini")
+    alembic_cfg.attributes["configure_logger"] = False
+    buffer = io.StringIO()
+    alembic_cfg.stdout = buffer
+    command.upgrade(alembic_cfg, revision=body.revision)
+    output = buffer.getvalue()
+    buffer.close()
+    return {"output": output}
+
+
+@alembic_router.get("/history")
 def history():
     alembic_cfg = Config("alembic.ini")
     alembic_cfg.attributes["configure_logger"] = False
