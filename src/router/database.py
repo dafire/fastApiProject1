@@ -7,14 +7,14 @@ from alembic.config import Config
 from fastapi import APIRouter, Body
 from pydantic import BaseModel
 
-alembic_router = APIRouter()
+database_router = APIRouter()
 
 
 class AlembicUpgrade(BaseModel):
     revision: str
 
 
-@alembic_router.post("/upgrade")
+@database_router.post("/upgrade")
 def alembic_upgrade(body: Annotated[AlembicUpgrade, Body(...)]):
     alembic_cfg = Config("alembic.ini")
     alembic_cfg.attributes["configure_logger"] = False
@@ -26,7 +26,7 @@ def alembic_upgrade(body: Annotated[AlembicUpgrade, Body(...)]):
     return {"output": output}
 
 
-@alembic_router.get("/history")
+@database_router.get("/history")
 def history():
     alembic_cfg = Config("alembic.ini")
     alembic_cfg.attributes["configure_logger"] = False

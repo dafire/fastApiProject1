@@ -7,7 +7,7 @@ from starlette.staticfiles import StaticFiles
 
 from lifespan import lifespan
 from router import login_router
-from router.alembic import alembic_router
+from router.database import database_router
 from router.web import web_router
 from settings import Settings, get_settings
 from utils.commit_session_middleware import CommitDatabaseSessionMiddleware
@@ -41,7 +41,7 @@ def create_web_app():
     if settings.debug:
         add_timing_middleware(app, record=logger.opt(depth=3).debug, prefix="", exclude="StaticFiles")
 
-    app.include_router(alembic_router, prefix="/alembic", tags=["alembic"])
+    app.include_router(database_router, prefix="/alembic", tags=["alembic"])
     app.include_router(web_router, include_in_schema=False)
     app.include_router(login_router, include_in_schema=False)
     app.mount("/static", StaticFiles(directory=settings.static_folder), name="static")

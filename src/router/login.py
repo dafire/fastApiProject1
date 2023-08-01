@@ -25,7 +25,7 @@ router = APIRouter(prefix="/auth")
 async def login_required(request: Request = None, websocket: WebSocket = None) -> User | None:
     if websocket:
         return None
-    if request and request.user and request.user.active:
+    if request and request.user:
         return request.user
     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
@@ -75,7 +75,7 @@ async def authorize(request: Request, backend: Annotated[str, Path(...)], user_a
         social_user = await user_auth_service.login_or_create_user(service=backend_obj.service, userinfo=userinfo)
         redirect_url = request.session.get("login_redirect", "/")
         request.session.clear()
-        request.session["user"] = social_user.user.to_dict()
+        request.session["user"] = social_user.model_dump_json()
         request.session["user_updated"] = datetime.utcnow()
         return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
     except OAuthError as e:
