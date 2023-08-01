@@ -6,8 +6,6 @@ from alembic import context
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
-
 from settings import DatabaseSettings, get_settings  # noqa
 from db.base import meta  # noqa
 import db.models  # noqa

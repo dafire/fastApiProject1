@@ -72,7 +72,7 @@ jobs:
           load: false
           push: true
           file: Dockerfile
-          tags: ghcr.io/${{ env.lowercase_repo }}:latest
+          tags: ghcr.io/${{ env.lowercase_repo }}:latest, ghcr.io/${{ env.lowercase_repo }}:${{ env.GIT_VERSION }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
