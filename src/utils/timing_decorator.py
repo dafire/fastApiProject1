@@ -3,9 +3,12 @@ from typing import Annotated
 from fastapi import Depends
 from starlette.requests import Request
 
+from settings import Settings, get_settings
 from utils.timing_middleware import record_timing
 
 __all__ = ["RecordTiming"]
+
+_settings = get_settings(Settings)
 
 
 class _RecordTiming:
@@ -14,7 +17,7 @@ class _RecordTiming:
         self.enabled = True
 
     def __call__(self, note: str | None = None):
-        if self.enabled:
+        if _settings.debug and self.enabled:
             record_timing(self.request, note)
 
 

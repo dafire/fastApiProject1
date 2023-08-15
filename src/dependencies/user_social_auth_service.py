@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Annotated
 
 from fastapi import Depends
+from orjson import orjson
 from pydantic import BaseModel, EmailStr
 from rich.pretty import pprint
 from sqlalchemy import select
@@ -60,8 +61,9 @@ class UserService:
                     raise self.CouldNotCreateUser from e
 
     @classmethod
-    async def load_user_from_session(cls, session_data: dict) -> CachedUser | None:
-        user = CachedUser(**session_data)
+    async def load_user_from_session(cls, session_data: str) -> CachedUser | None:
+        obj = orjson.loads(session_data)
+        user = CachedUser.model_validate(obj)
         pprint(user)
         print(datetime.utcnow() - user.loaded_at)
         return user

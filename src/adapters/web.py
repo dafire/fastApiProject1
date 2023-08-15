@@ -40,9 +40,9 @@ def create_web_app():
     if settings.debug:
         add_timing_middleware(app, record=logger.opt(depth=3).debug, prefix="", exclude="StaticFiles")
 
-    app.include_router(alembic_router, prefix="/db")
-    app.include_router(web_router)
-    app.include_router(login_router)
+    app.include_router(database_router, prefix="/alembic", tags=["alembic"])
+    app.include_router(web_router, include_in_schema=False)
+    app.include_router(login_router, include_in_schema=False)
     app.mount("/static", StaticFiles(directory=settings.static_folder), name="static")
 
     @app.get("/test")

@@ -28,8 +28,6 @@ ARG GIT_VERSION=develop
 ENV GIT_VERSION=${GIT_VERSION}
 
 # copy the content of the local src directory to the working directory
-COPY --chown=www-data alembic/ /var/www/alembic
-COPY --chown=www-data alembic.ini/ /var/www/alembic.ini
 COPY --chown=www-data src/ /var/www/app
 COPY --chown=www-data templates/ /var/www/templates
 COPY --chown=www-data static/ /var/www/static

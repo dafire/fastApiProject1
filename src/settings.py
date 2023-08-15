@@ -29,6 +29,8 @@ class Settings(BaseSettings):
 
     brand_color: str = Field(default="#7289DA")
 
+    git_version: str = Field(default="unknown")
+
     sentry_dsn: str | None = None
 
 
