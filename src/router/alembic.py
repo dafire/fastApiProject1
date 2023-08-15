@@ -1,27 +1,10 @@
 import io
 import re
-from typing import Annotated
 
 from alembic import command
 from alembic.config import Config
 from fastapi import APIRouter
 from rich.pretty import pprint
-
-
-class AlembicUpgrade(BaseModel):
-    revision: str
-
-
-@database_router.post("/upgrade")
-def alembic_upgrade(body: Annotated[AlembicUpgrade, Body(...)]):
-    alembic_cfg = Config("alembic.ini")
-    alembic_cfg.attributes["configure_logger"] = False
-    buffer = io.StringIO()
-    alembic_cfg.stdout = buffer
-    command.upgrade(alembic_cfg, revision=body.revision)
-    output = buffer.getvalue()
-    buffer.close()
-    return {"output": output}
 
 
 class Alembic(object):
@@ -39,6 +22,9 @@ class Alembic(object):
 
     def __exit__(self, type, value, traceback):
         self.buffer.close()
+
+
+router = APIRouter()
 
 
 @router.post("/upgrade")
