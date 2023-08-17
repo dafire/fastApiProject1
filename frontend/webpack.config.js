@@ -14,14 +14,14 @@ const config = {
         icons: "./src/scss/icons.scss",
     },
     output: {
-        path: path.resolve(__dirname, "../static"),
+        path: path.resolve(__dirname, "../static/frontend/"),
         filename: "[name]-[contenthash].js",
     },
     resolve: {
         extensions: [".tsx", ".ts", ".js"],
     },
     plugins: [
-       // new CleanWebpackPlugin(),
+        new CleanWebpackPlugin(),
         new WebpackAssetsManifest({
             // Options go here
         }),

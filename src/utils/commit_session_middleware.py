@@ -2,7 +2,18 @@ from loguru import logger
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 
-class CommitDatabaseSessionMiddleware:
+class CommitDatabaseSessionMiddleware:  # pylint: disable=too-few-public-methods
+    """
+    Middleware class that commits the database session after each HTTP response.
+
+    Args:
+        app (ASGIApp): The ASGI application to wrap.
+
+    Attributes:
+        app (ASGIApp): The wrapped ASGI application.
+
+    """
+
     def __init__(
         self,
         app: ASGIApp,
@@ -18,9 +29,10 @@ class CommitDatabaseSessionMiddleware:
             if message["type"] != "http.response.start":
                 await send(message)
                 return
-            if "state" in scope and (session := scope["state"].get("sqlalchemy_session")) and session.is_active:
-                logger.info("Committing session")
-                await session.commit()
+            if "state" in scope and (session := scope["state"].get("sqlalchemy_session")):
+                if session.is_active:
+                    logger.info("Committing session")
+                    await session.commit()
             await send(message)
 
         await self.app(scope, receive, _inner)

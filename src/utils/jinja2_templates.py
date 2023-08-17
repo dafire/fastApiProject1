@@ -5,21 +5,46 @@ from typing import Annotated
 import jinja2
 import orjson
 from fastapi import Depends
+from loguru import logger
 from starlette.requests import Request
 from starlette.responses import HTMLResponse
 from starlette.templating import Jinja2Templates, pass_context
 
-__all__ = ["JinjaTemplates", "Template"]
-
 from settings import Settings, get_settings
+
+__all__ = ["JinjaTemplates", "Template"]
 
 _settings = get_settings(Settings)
 
 
+def get_manifest(folder: str = "frontend") -> dict[str, str]:
+    """
+    Retrieves the manifest file for the specified folder.
+
+    :param folder: The folder in which the manifest file is located. Defaults to "frontend".
+    :return: A dictionary containing the contents of the manifest file.
+    """
+    manifest_file_path = Path(_settings.static_folder) / folder / "assets-manifest.json"
+
+    try:
+        manifest_data = manifest_file_path.read_text(encoding="utf-8")
+        return orjson.loads(manifest_data)  # pylint: disable=maybe-no-member
+    except orjson.JSONDecodeError as exc:  # pylint: disable=maybe-no-member
+        logger.error("Could not parse frontend manifest {}", exc)
+        return {}
+
+
 @pass_context  # context is required otherwise jinja2 caches the result in bytecode for constants
 def debug_asset_filter(_, path):
-    txt = Path(os.path.join(_settings.static_folder, "assets-manifest.json")).read_text()
-    return orjson.loads(txt).get(path)
+    path = "frontend" + "/" + get_manifest("frontend").get(path)
+    logger.debug("asset: {}", path)
+    return path
+
+
+def asset_filter(path):
+    path = "frontend" + "/" + get_manifest("frontend").get(path)
+    logger.debug("asset: {}", path)
+    return path
 
 
 class JinjaTemplates:
@@ -33,7 +58,7 @@ class JinjaTemplates:
         self.request = request
 
     async def __call__(self, template_file, status_code=200, **kwargs):
-        context = dict(request=self.request)
+        context = {"request": self.request}
         context.update(kwargs)
         return HTMLResponse(await self.render_template(template_file, **context), status_code=status_code)
 
@@ -51,8 +76,6 @@ class JinjaTemplates:
         enable_async=True,
         **env_options,
     ) -> jinja2.Environment:
-        global static_folder
-
         if not _settings.template_folder:
             msg = "The template_folder must be specified."
             raise cls.JinjaException(msg)
@@ -65,7 +88,10 @@ class JinjaTemplates:
         cls.templates.env.auto_reload = _settings.debug
         cls.templates.env.globals["settings"] = _settings.model_dump(exclude={"secret_key"})
 
-        cls.templates.env.filters["asset"] = debug_asset_filter
+        if _settings.debug:
+            cls.templates.env.filters["asset"] = debug_asset_filter
+        else:
+            cls.templates.env.filters["asset"] = asset_filter
 
         return cls.templates.env
 

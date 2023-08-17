@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="{{ request.url_for("static", path="icons.css"|asset) }}" data-turbo-track="reload">
         <meta name="turbo-cache-control" content="no-cache">
         <meta name="theme-color" content="{{ settings.brand_color }}">
-        <link rel="icon" type="image/png" href="/web/static/favicon.png">
+        <link rel="icon" type="image/png" href="{{ request.url_for("static", path="favicon.png") }}">
         <title>{{ title|default("FastAPI") }}</title>
     {% endblock %}
 </head>
